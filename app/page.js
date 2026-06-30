@@ -1,66 +1,85 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import Link from "next/link";
 
-export default function Home() {
+const profiles = [
+  {
+    id: 1,
+    name: "Favour",
+    title: "Student",
+    year: "Senior",
+    major: "Web Programming",
+  },
+  {
+    id: 2,
+    name: "Ngozi",
+    title: "Professor",
+    year: "Junior",
+    major: "Cybersecurity",
+  },
+  {
+    id: 3,
+    name: "Zendaya",
+    title: "Developer",
+    year: "Senior",
+    major: "Economics",
+  },
+];
+
+export default async function Home({ searchParams }) {
+  const params = await searchParams;
+
+  const title = params.title || "";
+  const search = params.search || "";
+
+  const filteredProfiles = profiles.filter((profile) => {
+    const matchesTitle =
+      title === "" || profile.title.toLowerCase() === title.toLowerCase();
+
+    const matchesSearch =
+      search === "" ||
+      profile.name.toLowerCase().includes(search.toLowerCase());
+
+    return matchesTitle && matchesSearch;
+  });
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.js file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main>
+      <h1>Favour&apos;s Profile App</h1>
+      <p>Lab 15: Next.js Pages and Routes</p>
+
+      <form action="/">
+        <label>
+          Filter by title:
+          <select name="title" defaultValue={title}>
+            <option value="">All</option>
+            <option value="Student">Student</option>
+            <option value="Professor">Professor</option>
+            <option value="Developer">Developer</option>
+          </select>
+        </label>
+
+        <label>
+          Search by name:
+          <input
+            name="search"
+            defaultValue={search}
+            placeholder="Search by name"
+          />
+        </label>
+
+        <button type="submit">Apply</button>
+      </form>
+
+      <p>Showing {filteredProfiles.length} profiles</p>
+
+      {filteredProfiles.map((profile) => (
+        <div className="profile-card" key={profile.id}>
+          <h2>{profile.name}</h2>
+          <p>Title: {profile.title}</p>
+          <p>Year: {profile.year}</p>
+          <p>Major: {profile.major}</p>
+          <Link href={`/profiles/${profile.id}`}>View Profile</Link>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      ))}
+    </main>
   );
 }

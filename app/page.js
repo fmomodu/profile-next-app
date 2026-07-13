@@ -1,31 +1,14 @@
 import Link from "next/link";
+import { neon } from "@neondatabase/serverless";
 
-const profiles = [
-  {
-    id: 1,
-    name: "Favour",
-    title: "Student",
-    year: "Senior",
-    major: "Web Programming",
-  },
-  {
-    id: 2,
-    name: "Ngozi",
-    title: "Professor",
-    year: "Junior",
-    major: "Cybersecurity",
-  },
-  {
-    id: 3,
-    name: "Zendaya",
-    title: "Developer",
-    year: "Senior",
-    major: "Economics",
-  },
-];
+
 
 export default async function Home({ searchParams }) {
   const params = await searchParams;
+
+  const sql = neon(process.env.DATABASE_URL);
+  const profiles = await sql`SELECT * FROM profiles ORDER BY id`;
+  
 
   const title = params.title || "";
   const search = params.search || "";
@@ -45,6 +28,11 @@ export default async function Home({ searchParams }) {
     <main>
       <h1>Favour&apos;s Profile App</h1>
       <p>Lab 15: Next.js Pages and Routes</p>
+
+      <p>
+        <Link href="/add-profile"> Add Profile</Link>
+      </p>
+
 
       <form action="/">
         <label>

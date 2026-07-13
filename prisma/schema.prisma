@@ -1,10 +1,10 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL_UNPOOLED")
 }
 
 model profiles {
@@ -13,4 +13,12 @@ model profiles {
   title String @db.VarChar(100)
   year  String @db.VarChar(50)
   major String @db.VarChar(100)
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

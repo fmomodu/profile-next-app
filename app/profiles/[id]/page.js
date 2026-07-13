@@ -1,35 +1,19 @@
 import Link from "next/link";
+import { neon } from "@neondatabase/serverless";
 
-const profiles = [
-  {
-    id: 1,
-    name: "Favour",
-    title: "Student",
-    year: "Senior",
-    major: "Web Programming",
-  },
-  {
-    id: 2,
-    name: "Ngozi",
-    title: "Professor",
-    year: "Junior",
-    major: "Cybersecurity",
-  },
-  {
-    id: 3,
-    name: "Zendaya",
-    title: "Developer",
-    year: "Senior",
-    major: "Economics",
-  },
-];
 
 export default async function ProfileDetails({ params }) {
   const { id } = await params;
 
-  const profile = profiles.find(
-    (profile) => profile.id === Number(id)
-  );
+  const sql = neon(process.env.DATABASE_URL);
+
+
+  const profiles = await sql`
+  SELECT * FROM profiles
+  WHERE id = ${Number(id)}
+  `;
+
+  const profile = profiles[0];
 
   if (!profile) {
     return (
@@ -48,6 +32,11 @@ export default async function ProfileDetails({ params }) {
       <p>Year: {profile.year}</p>
       <p>Major: {profile.major}</p>
 
+      <Link href={`/profiles/${profile.id}/edit`}>
+      Edit Profile
+      </Link>
+
+      <br />
       <Link href="/">Back Home</Link>
     </main>
   );
